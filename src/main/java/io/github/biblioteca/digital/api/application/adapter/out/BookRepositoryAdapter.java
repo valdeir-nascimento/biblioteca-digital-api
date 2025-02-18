@@ -1,4 +1,4 @@
-package io.github.biblioteca.digital.api.application.out;
+package io.github.biblioteca.digital.api.application.adapter.out;
 
 import io.github.biblioteca.digital.api.common.mapper.BookMapper;
 import io.github.biblioteca.digital.api.common.dto.BookDTO;

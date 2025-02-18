@@ -1,5 +1,6 @@
 package io.github.biblioteca.digital.api.application.out;
 
+import io.github.biblioteca.digital.api.application.adapter.out.BookRepositoryAdapter;
 import io.github.biblioteca.digital.api.common.dto.BookDTO;
 import io.github.biblioteca.digital.api.common.dto.response.PageResponseDTO;
 import io.github.biblioteca.digital.api.common.exception.NotFoundException;

@@ -30,7 +30,7 @@ class CreateUserUseCaseTest {
         UserDTO result = createUserUseCase.create(user);
 
         assertNotNull(result.id());
-        assertEquals(userSaved.nome(), result.nome());
+        assertEquals(userSaved.name(), result.name());
         assertEquals(userSaved.email(), result.email());
         verify(userRepositoryPort, times(1)).create(user);
     }
