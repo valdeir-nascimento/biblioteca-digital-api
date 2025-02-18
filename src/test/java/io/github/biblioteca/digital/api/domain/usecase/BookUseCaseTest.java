@@ -35,7 +35,7 @@ class BookUseCaseTest {
 
         assertNotNull(result);
         assertEquals(bookSaved.id(), result.id());
-        assertEquals(bookSaved.tiltle(), result.tiltle());
+        assertEquals(bookSaved.title(), result.title());
         assertEquals(bookSaved.author(), result.author());
         assertEquals(bookSaved.available(), result.available());
         assertEquals(bookSaved.userId(), result.userId());

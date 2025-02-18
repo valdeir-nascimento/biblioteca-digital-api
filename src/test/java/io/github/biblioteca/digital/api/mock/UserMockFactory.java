@@ -1,6 +1,7 @@
 package io.github.biblioteca.digital.api.mock;
 
 import io.github.biblioteca.digital.api.common.dto.UserDTO;
+import io.github.biblioteca.digital.api.infrastructure.model.User;
 
 public class UserMockFactory {
 
@@ -12,6 +13,14 @@ public class UserMockFactory {
 
     public static UserDTO getUserSaved() {
         return new UserDTO(1, "João da Silva", "joao.silva@gmail.com");
+    }
+
+    public static User getUserModel() {
+        User user = new User();
+        user.setId(1L);
+        user.setName("João da Silva");
+        user.setEmail("joao.silva@gmail.com");
+        return user;
     }
 
 }
