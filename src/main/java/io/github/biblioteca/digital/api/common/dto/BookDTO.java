@@ -1,4 +1,12 @@
 package io.github.biblioteca.digital.api.common.dto;
 
-public record BookDTO(Integer id, String title, String author, Boolean available, Integer userId) {
-}
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
+public record BookDTO(
+    Integer id,
+    @NotBlank String title,
+    @NotBlank String author,
+    @NotNull Boolean available,
+    Integer userId
+) { }

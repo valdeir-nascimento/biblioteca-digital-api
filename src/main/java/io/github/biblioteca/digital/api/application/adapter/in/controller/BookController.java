@@ -3,6 +3,7 @@ package io.github.biblioteca.digital.api.application.adapter.in.controller;
 import io.github.biblioteca.digital.api.common.dto.BookDTO;
 import io.github.biblioteca.digital.api.common.dto.response.PageResponseDTO;
 import io.github.biblioteca.digital.api.domain.port.in.BookUseCasePort;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,13 +17,13 @@ public class BookController {
     private final BookUseCasePort bookUseCasePort;
 
     @PostMapping
-    public ResponseEntity<BookDTO> create(@RequestBody BookDTO bookDTO) {
+    public ResponseEntity<BookDTO> create(@Valid @RequestBody BookDTO bookDTO) {
         final var response = bookUseCasePort.create(bookDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PutMapping("/{bookId}")
-    public ResponseEntity<BookDTO> update(@PathVariable Integer bookId, @RequestBody BookDTO bookDTO) {
+    public ResponseEntity<BookDTO> update(@PathVariable Integer bookId, @Valid @RequestBody BookDTO bookDTO) {
         bookUseCasePort.update(bookId, bookDTO);
         return ResponseEntity.noContent().build();
     }
