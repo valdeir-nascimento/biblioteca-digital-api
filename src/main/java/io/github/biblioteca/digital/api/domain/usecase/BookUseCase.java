@@ -19,7 +19,9 @@ public class BookUseCase implements BookUseCasePort {
 
     @Override
     public BookDTO create(BookDTO bookDTO) {
-        validationUseCasePort.validateUserExists(bookDTO.userId());
+        if (bookDTO.id() != null) {
+            validationUseCasePort.validateUserExists(bookDTO.userId());
+        }
         return bookRepositoryPort.create(bookDTO);
     }
 
