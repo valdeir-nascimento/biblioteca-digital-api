@@ -3,6 +3,7 @@ package io.github.biblioteca.digital.api.application.adapter.out;
 import io.github.biblioteca.digital.api.common.dto.UserDTO;
 import io.github.biblioteca.digital.api.common.exception.NotFoundException;
 import io.github.biblioteca.digital.api.common.mapper.UserMapper;
+import io.github.biblioteca.digital.api.common.util.MessagesUtils;
 import io.github.biblioteca.digital.api.domain.port.out.UserRepositoryPort;
 import io.github.biblioteca.digital.api.infrastructure.model.User;
 import io.github.biblioteca.digital.api.infrastructure.repository.UserRepository;
@@ -26,6 +27,6 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
     @Override
     public void validateUserExists(Integer userId) {
         userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("User not found"));
+                .orElseThrow(() -> new NotFoundException(MessagesUtils.MSG_USER_NOT_FOUND));
     }
 }

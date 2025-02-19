@@ -1,4 +1,4 @@
-package io.github.biblioteca.digital.api.mock;
+package io.github.biblioteca.digital.api.common.mock;
 
 import io.github.biblioteca.digital.api.common.dto.BookDTO;
 import io.github.biblioteca.digital.api.common.dto.response.PageResponseDTO;
@@ -12,11 +12,15 @@ public class BookMockFactory {
     }
 
     public static BookDTO getCreateBook() {
-        return new BookDTO(null, "Jornada Java", "Robert Martin ", true, 1);
+        return new BookDTO(null, "Jornada Java", "Robert Martin", true, 1);
     }
 
     public static BookDTO getBookSaved() {
         return new BookDTO(1, "Jornada Java", "Robert Martin", true, 1);
+    }
+
+    public static BookDTO getBookInvalid() {
+        return new BookDTO(1, null, "Robert Martin", true, null);
     }
 
     public static Book getCreateBookModel() {
@@ -36,10 +40,10 @@ public class BookMockFactory {
         final var bookPage = Collections.singletonList(getBookSaved());
         return PageResponseDTO.<BookDTO>builder()
                 .content(bookPage)
-                .page(1)
+                .page(0)
                 .size(1)
-                .totalElements(0)
-                .totalPages(0)
+                .totalElements(1)
+                .totalPages(1)
                 .build();
     }
 

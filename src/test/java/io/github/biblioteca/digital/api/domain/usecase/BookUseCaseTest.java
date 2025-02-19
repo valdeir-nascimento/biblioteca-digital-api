@@ -1,14 +1,16 @@
 package io.github.biblioteca.digital.api.domain.usecase;
 
+import io.github.biblioteca.digital.api.common.exception.NotFoundException;
 import io.github.biblioteca.digital.api.domain.port.in.UserValidationUseCasePort;
 import io.github.biblioteca.digital.api.domain.port.out.BookRepositoryPort;
-import io.github.biblioteca.digital.api.mock.BookMockFactory;
+import io.github.biblioteca.digital.api.common.mock.BookMockFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static io.github.biblioteca.digital.api.common.util.MessagesUtils.MSG_USER_NOT_FOUND;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -40,21 +42,20 @@ class BookUseCaseTest {
         assertEquals(bookSaved.available(), result.available());
         assertEquals(bookSaved.userId(), result.userId());
 
-        verify(userValidationUseCasePort, times(1)).validateUserExists(book.userId());
         verify(bookRepositoryPort, times(1)).create(book);
+        verify(userValidationUseCasePort, never()).validateUserExists(any());
     }
 
     @Test
     void givenInvalidUser_whenInvokeCreateBook_thenThrowsException() {
-        final var book = BookMockFactory.getCreateBook();
+        final var book = BookMockFactory.getBookInvalid();
 
-        doThrow(new IllegalArgumentException("User not found")).when(userValidationUseCasePort).validateUserExists(book.userId());
+        doThrow(new NotFoundException(MSG_USER_NOT_FOUND)).when(userValidationUseCasePort)
+                .validateUserExists(book.userId());
 
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> bookUseCase.create(book));
-
-        assertEquals("User not found", exception.getMessage());
-        verify(userValidationUseCasePort, times(1)).validateUserExists(book.userId());
-        verify(bookRepositoryPort, never()).create(any());
+        NotFoundException exception = assertThrows(NotFoundException.class, () -> bookUseCase.create(book));
+        assertEquals(MSG_USER_NOT_FOUND, exception.getMessage());
+        verify(bookRepositoryPort, never()).create(book);
     }
 
     @Test

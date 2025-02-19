@@ -2,7 +2,7 @@ package io.github.biblioteca.digital.api.domain.usecase;
 
 import io.github.biblioteca.digital.api.common.dto.UserDTO;
 import io.github.biblioteca.digital.api.domain.port.out.UserRepositoryPort;
-import io.github.biblioteca.digital.api.mock.UserMockFactory;
+import io.github.biblioteca.digital.api.common.mock.UserMockFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

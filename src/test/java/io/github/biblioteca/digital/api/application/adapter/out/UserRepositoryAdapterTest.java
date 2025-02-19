@@ -4,7 +4,7 @@ import io.github.biblioteca.digital.api.common.dto.UserDTO;
 import io.github.biblioteca.digital.api.common.exception.NotFoundException;
 import io.github.biblioteca.digital.api.common.mapper.UserMapper;
 import io.github.biblioteca.digital.api.infrastructure.repository.UserRepository;
-import io.github.biblioteca.digital.api.mock.UserMockFactory;
+import io.github.biblioteca.digital.api.common.mock.UserMockFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

@@ -1,4 +1,4 @@
-package io.github.biblioteca.digital.api.mock;
+package io.github.biblioteca.digital.api.common.mock;
 
 import io.github.biblioteca.digital.api.common.dto.UserDTO;
 import io.github.biblioteca.digital.api.infrastructure.model.User;

@@ -3,7 +3,7 @@ package io.github.biblioteca.digital.api.application.adapter.in.controller;
 import io.github.biblioteca.digital.api.common.dto.BookDTO;
 import io.github.biblioteca.digital.api.common.util.JsonUtils;
 import io.github.biblioteca.digital.api.domain.port.in.BookUseCasePort;
-import io.github.biblioteca.digital.api.mock.BookMockFactory;
+import io.github.biblioteca.digital.api.common.mock.BookMockFactory;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
