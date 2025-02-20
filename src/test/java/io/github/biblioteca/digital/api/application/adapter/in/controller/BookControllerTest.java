@@ -28,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(MockitoExtension.class)
 class BookControllerTest {
 
-    private static final String PATH = "/books";
+    private static final String PATH = "/api/v1/books";
 
     @InjectMocks
     private BookController bookController;

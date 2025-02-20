@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/books")
+@RequestMapping("/api/v1/books")
 public class BookController {
 
     private final BookUseCasePort bookUseCasePort;

@@ -1,5 +1,6 @@
 package io.github.biblioteca.digital.api.application.adapter.in.controller;
 
+import io.github.biblioteca.digital.api.common.builder.UrlBuilder;
 import io.github.biblioteca.digital.api.common.dto.UserDTO;
 import io.github.biblioteca.digital.api.common.mock.UserMockFactory;
 import io.github.biblioteca.digital.api.common.util.JsonUtils;
@@ -23,7 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(MockitoExtension.class)
 class UserRegisterControllerTest {
 
-    private static final String PATH = "/users";
+    private static final String PATH = "/api/v1/users";
 
     @InjectMocks
     private UserRegisterController userRegisterController;
@@ -39,10 +40,11 @@ class UserRegisterControllerTest {
     @Test
     @SneakyThrows
     void givenValidUserDTO_whenCreate_thenReturnStatusCreated() {
+        final var url = UrlBuilder.builder(PATH).build();
         final var jsonUserCreatedSuccess = JsonUtils.getContentFromResource("/json/user-create-success.json");
         final var expectedResponse = UserMockFactory.getUserSaved();
         when(userRegisterUseCasePort.create(any(UserDTO.class))).thenReturn(expectedResponse);
-        mockMvc.perform(post(PATH)
+        mockMvc.perform(post(url)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonUserCreatedSuccess))
                 .andExpect(status().isCreated());
@@ -51,8 +53,9 @@ class UserRegisterControllerTest {
     @Test
     @SneakyThrows
     void givenInvalidUserDTO_whenCreateUser_thenReturnsBadRequest() {
+        final var url = UrlBuilder.builder(PATH).build();
         final var jsonUserCreatedParamInvalid = JsonUtils.getContentFromResource("/json/book-created-param-invalid.json");
-        mockMvc.perform(post(PATH)
+        mockMvc.perform(post(url)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonUserCreatedParamInvalid))
                 .andExpect(status().isBadRequest());
