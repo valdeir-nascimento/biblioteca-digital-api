@@ -8,4 +8,5 @@ public interface UserRepositoryPort {
 
     void validateUserExists(Integer userId);
 
+    void validateEmailExists(String email);
 }

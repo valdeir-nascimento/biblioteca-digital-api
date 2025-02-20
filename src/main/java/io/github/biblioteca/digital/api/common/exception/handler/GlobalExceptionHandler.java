@@ -4,6 +4,7 @@ package io.github.biblioteca.digital.api.common.exception.handler;
 import com.fasterxml.jackson.databind.JsonMappingException.Reference;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.fasterxml.jackson.databind.exc.PropertyBindingException;
+import io.github.biblioteca.digital.api.common.exception.EmailConflictException;
 import io.github.biblioteca.digital.api.common.exception.NotFoundException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -54,6 +55,16 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @Override
     protected ResponseEntity<Object> handleHttpMediaTypeNotAcceptable(HttpMediaTypeNotAcceptableException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         return ResponseEntity.status(status).headers(headers).build();
+    }
+
+    @ExceptionHandler(EmailConflictException.class)
+    public ResponseEntity<Object> handleEmailConflictException(EmailConflictException ex, WebRequest request) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        String detail = ex.getMessage();
+        JsonError jsonError = createProblemBuilder(status, TypeError.ERRO_NEGOCIO, detail)
+                .userMessage(detail)
+                .build();
+        return handleExceptionInternal(ex, jsonError, new HttpHeaders(), status, request);
     }
 
     @ExceptionHandler(NotFoundException.class)

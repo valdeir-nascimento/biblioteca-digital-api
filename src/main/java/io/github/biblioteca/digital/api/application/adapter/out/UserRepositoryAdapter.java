@@ -1,6 +1,7 @@
 package io.github.biblioteca.digital.api.application.adapter.out;
 
 import io.github.biblioteca.digital.api.common.dto.UserDTO;
+import io.github.biblioteca.digital.api.common.exception.EmailConflictException;
 import io.github.biblioteca.digital.api.common.exception.NotFoundException;
 import io.github.biblioteca.digital.api.common.mapper.UserMapper;
 import io.github.biblioteca.digital.api.common.util.MessagesUtils;
@@ -28,5 +29,12 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
     public void validateUserExists(Integer userId) {
         userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException(MessagesUtils.MSG_USER_NOT_FOUND));
+    }
+
+    @Override
+    public void validateEmailExists(String email) {
+        userRepository.findByEmail(email).ifPresent(user -> {
+            throw new EmailConflictException(MessagesUtils.MSG_EMAIL_CONFLICT);
+        });
     }
 }
