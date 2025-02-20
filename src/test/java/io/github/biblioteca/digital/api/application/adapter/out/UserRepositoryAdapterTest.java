@@ -1,10 +1,12 @@
 package io.github.biblioteca.digital.api.application.adapter.out;
 
 import io.github.biblioteca.digital.api.common.dto.UserDTO;
+import io.github.biblioteca.digital.api.common.exception.EmailConflictException;
 import io.github.biblioteca.digital.api.common.exception.NotFoundException;
 import io.github.biblioteca.digital.api.common.mapper.UserMapper;
-import io.github.biblioteca.digital.api.infrastructure.repository.UserRepository;
 import io.github.biblioteca.digital.api.common.mock.UserMockFactory;
+import io.github.biblioteca.digital.api.common.util.MessagesUtils;
+import io.github.biblioteca.digital.api.infrastructure.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -14,8 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class UserRepositoryAdapterTest {
@@ -66,7 +67,29 @@ class UserRepositoryAdapterTest {
 
         NotFoundException exception = assertThrows(NotFoundException.class,
                 () -> userRepositoryAdapter.validateUserExists(userId));
-        assertEquals("User not found", exception.getMessage());
+        assertEquals(MessagesUtils.MSG_USER_NOT_FOUND, exception.getMessage());
         verify(userRepository).findById(userId);
     }
+
+    @Test
+    void givenNonExistingEmail_whenValidateEmailExists_thenNoExceptionThrown() {
+        final var email = "test@example.com";
+        when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
+        assertDoesNotThrow(() -> userRepositoryAdapter.validateEmailExists(email));
+        verify(userRepository, times(1)).findByEmail(email);
+    }
+
+    @Test
+    void givenExistingEmail_whenValidateEmailExists_thenThrowsEmailConflictException() {
+        final var userModel = UserMockFactory.getUserModel();
+
+        when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(userModel));
+
+        EmailConflictException exception = assertThrows(EmailConflictException.class,
+                () -> userRepositoryAdapter.validateEmailExists(userModel.getEmail()));
+
+        assertEquals(MessagesUtils.MSG_EMAIL_CONFLICT, exception.getMessage());
+        verify(userRepository, times(1)).findByEmail(anyString());
+    }
+
 }

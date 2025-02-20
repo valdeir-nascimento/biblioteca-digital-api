@@ -1,6 +1,7 @@
 package io.github.biblioteca.digital.api.domain.usecase;
 
 import io.github.biblioteca.digital.api.common.dto.UserDTO;
+import io.github.biblioteca.digital.api.domain.port.in.EmailValidatorUseCasePort;
 import io.github.biblioteca.digital.api.domain.port.out.UserRepositoryPort;
 import io.github.biblioteca.digital.api.common.mock.UserMockFactory;
 import org.junit.jupiter.api.Test;
@@ -18,8 +19,11 @@ class CreateUserUseCaseTest {
     @Mock
     private UserRepositoryPort userRepositoryPort;
 
+    @Mock
+    private EmailValidatorUseCasePort emailValidatorUseCasePort;
+
     @InjectMocks
-    private CreateUserUseCase createUserUseCase;
+    private UserRegisterUseCase createUserUseCase;
 
     @Test
     void givenValidData_whenRegisteringNewUser_thenUserIsSuccessfullyRegistered() {
@@ -33,6 +37,7 @@ class CreateUserUseCaseTest {
         assertEquals(userSaved.name(), result.name());
         assertEquals(userSaved.email(), result.email());
         verify(userRepositoryPort, times(1)).create(user);
+        verify(emailValidatorUseCasePort, times(1)).validationEmailExists(user.email());
     }
 
 }
