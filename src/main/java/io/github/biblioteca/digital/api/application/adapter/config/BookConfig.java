@@ -1,5 +1,6 @@
 package io.github.biblioteca.digital.api.application.adapter.config;
 
+import io.github.biblioteca.digital.api.domain.port.in.BookUseCasePort;
 import io.github.biblioteca.digital.api.domain.port.in.UserValidationUseCasePort;
 import io.github.biblioteca.digital.api.domain.port.out.BookRepositoryPort;
 import io.github.biblioteca.digital.api.domain.usecase.BookUseCase;
@@ -10,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 public class BookConfig {
 
     @Bean
-    public BookUseCase bookUseCase(BookRepositoryPort bookRepositoryPort, UserValidationUseCasePort validationUseCasePort) {
+    public BookUseCasePort bookUseCase(BookRepositoryPort bookRepositoryPort, UserValidationUseCasePort validationUseCasePort) {
         return new BookUseCase(bookRepositoryPort, validationUseCasePort);
     }
 
