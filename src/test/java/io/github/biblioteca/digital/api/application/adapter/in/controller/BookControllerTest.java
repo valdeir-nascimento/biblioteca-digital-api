@@ -1,5 +1,6 @@
 package io.github.biblioteca.digital.api.application.adapter.in.controller;
 
+import io.github.biblioteca.digital.api.common.builder.UrlBuilder;
 import io.github.biblioteca.digital.api.common.dto.BookDTO;
 import io.github.biblioteca.digital.api.common.util.JsonUtils;
 import io.github.biblioteca.digital.api.domain.port.in.BookUseCasePort;
@@ -43,11 +44,11 @@ class BookControllerTest {
     @Test
     @SneakyThrows
     void givenValidBookDTO_whenCreate_thenReturnStatusCreated() {
+        final var url = UrlBuilder.builder(PATH).build();
         final var jsonBookCreatedSuccess = JsonUtils.getContentFromResource("/json/book-created-success.json");
         final var expectedResponse = BookMockFactory.getBookSaved();
         when(bookUseCasePort.create(any(BookDTO.class))).thenReturn(expectedResponse);
-        mockMvc.perform(post(PATH)
-                        .contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(post(url).contentType(MediaType.APPLICATION_JSON)
                         .content(jsonBookCreatedSuccess))
                 .andExpect(status().isCreated());
     }
@@ -56,9 +57,10 @@ class BookControllerTest {
     @SneakyThrows
     void givenValidBookId_whenFindById_thenReturnsBook() {
         final var bookId = 1;
+        final var url = UrlBuilder.builder(PATH).pathVariable(bookId).build();
         final var expectedResponse = BookMockFactory.getBookSaved();
         when(bookUseCasePort.findById(bookId)).thenReturn(expectedResponse);
-        mockMvc.perform(get(PATH + "/{bookId}", bookId))
+        mockMvc.perform(get(url))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(expectedResponse.id()))
@@ -72,10 +74,10 @@ class BookControllerTest {
     @SneakyThrows
     void givenValidBookIdAndBookDTO_whenUpdateBook_thenReturnsNoContent() {
         final var bookId = 1;
+        final var url = UrlBuilder.builder(PATH).pathVariable(bookId).build();
         final var jsonBookUpdateSuccess = JsonUtils.getContentFromResource("/json/book-update-success.json");
         doNothing().when(bookUseCasePort).update(eq(bookId), any(BookDTO.class));
-        mockMvc.perform(put(PATH + "/{bookId}", bookId)
-                        .contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(put(url).contentType(MediaType.APPLICATION_JSON)
                         .content(jsonBookUpdateSuccess))
                 .andExpect(status().isNoContent());
     }
@@ -84,19 +86,22 @@ class BookControllerTest {
     @SneakyThrows
     void givenValidBookId_whenDeleteBook_thenReturnsNoContent() {
         final var bookId = 1;
+        final var url = UrlBuilder.builder(PATH).pathVariable(bookId).build();
         doNothing().when(bookUseCasePort).deleteById(bookId);
-        mockMvc.perform(delete(PATH + "/{bookId}", bookId))
+        mockMvc.perform(delete(url))
                 .andExpect(status().isNoContent());
     }
 
     @Test
     @SneakyThrows
     void givenPageAndSize_whenFindAll_thenReturnsPageResponse() {
+        final var url = UrlBuilder.builder(PATH)
+                .queryParam("page", "0")
+                .queryParam("size", "10")
+                .build();
         final var pageResponse = BookMockFactory.getBookPageResponse();
         when(bookUseCasePort.findAll(0, 10)).thenReturn(pageResponse);
-        mockMvc.perform(get("/books")
-                        .param("page", "0")
-                        .param("size", "10"))
+        mockMvc.perform(get(url))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.content[0].id").value(1))
@@ -114,19 +119,20 @@ class BookControllerTest {
     @SneakyThrows
     void givenNonExistingBookId_whenFindById_thenReturnsNotFound() {
         final var bookId = 999;
+        final var url = UrlBuilder.builder(PATH).pathVariable(bookId).build();
         doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND))
                 .when(bookUseCasePort)
                 .findById(bookId);
-        mockMvc.perform(get("/books/{bookId}", bookId))
+        mockMvc.perform(get(url))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     @SneakyThrows
     void givenInvalidBookDTO_whenCreateBook_thenReturnsBadRequest() {
+        final var url = UrlBuilder.builder(PATH).build();
         final var jsonBookCretedParamInvalid = JsonUtils.getContentFromResource("/json/book-created-param-invalid.json");
-        mockMvc.perform(post("/books")
-                        .contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(post(url).contentType(MediaType.APPLICATION_JSON)
                         .content(jsonBookCretedParamInvalid))
                 .andExpect(status().isBadRequest());
     }
@@ -135,12 +141,11 @@ class BookControllerTest {
     @SneakyThrows
     void givenInvalidBookDTO_whenUpdateBook_thenReturnsBadRequest() {
         final var bookId = 1;
+        final var url = UrlBuilder.builder(PATH).pathVariable(bookId).build();
         final var jsonBookUpdateParamInvalid = JsonUtils.getContentFromResource("/json/book-update-param-invalid.json");
-        mockMvc.perform(put("/books/{bookId}", bookId)
-                        .contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(put(url).contentType(MediaType.APPLICATION_JSON)
                         .content(jsonBookUpdateParamInvalid))
                 .andExpect(status().isBadRequest());
-
     }
 
     @Test
