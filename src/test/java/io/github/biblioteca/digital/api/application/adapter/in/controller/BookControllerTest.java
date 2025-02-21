@@ -2,9 +2,11 @@ package io.github.biblioteca.digital.api.application.adapter.in.controller;
 
 import io.github.biblioteca.digital.api.common.builder.UrlBuilder;
 import io.github.biblioteca.digital.api.common.dto.BookDTO;
-import io.github.biblioteca.digital.api.common.util.JsonUtils;
-import io.github.biblioteca.digital.api.domain.port.in.BookUseCasePort;
+import io.github.biblioteca.digital.api.common.dto.BookRentalDTO;
 import io.github.biblioteca.digital.api.common.mock.BookMockFactory;
+import io.github.biblioteca.digital.api.common.util.JsonUtils;
+import io.github.biblioteca.digital.api.domain.port.in.BookRentalUseCasePort;
+import io.github.biblioteca.digital.api.domain.port.in.BookUseCasePort;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,7 +22,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -34,6 +35,8 @@ class BookControllerTest {
     private BookController bookController;
     @Mock
     private BookUseCasePort bookUseCasePort;
+    @Mock
+    private BookRentalUseCasePort bookRentalUseCasePort;
     private MockMvc mockMvc;
 
     @BeforeEach
@@ -72,14 +75,15 @@ class BookControllerTest {
 
     @Test
     @SneakyThrows
-    void givenValidBookIdAndBookDTO_whenUpdateBook_thenReturnsNoContent() {
+    void givenValidBookIdAndBookDTO_whenUpdateBook_thenReturnsSuccess() {
         final var bookId = 1;
         final var url = UrlBuilder.builder(PATH).pathVariable(bookId).build();
         final var jsonBookUpdateSuccess = JsonUtils.getContentFromResource("/json/book-update-success.json");
-        doNothing().when(bookUseCasePort).update(eq(bookId), any(BookDTO.class));
+        final var expectedResponse = BookMockFactory.getBookSaved();
+        when(bookUseCasePort.update(anyInt(), any(BookDTO.class))).thenReturn(expectedResponse);
         mockMvc.perform(put(url).contentType(MediaType.APPLICATION_JSON)
                         .content(jsonBookUpdateSuccess))
-                .andExpect(status().isNoContent());
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -155,5 +159,40 @@ class BookControllerTest {
                 .when(bookUseCasePort)
                 .deleteById(bookId);
         assertThrows(ResponseStatusException.class, () -> bookController.deleteById(bookId));
+    }
+
+    @Test
+    @SneakyThrows
+    void givenValidBookRentalDTO_whenRental_thenReturnStatusSuccess() {
+        final var bookId = 1;
+        final var url = UrlBuilder.builder(PATH)
+                .pathVariable(bookId)
+                .path("/rent")
+                .build();
+        final var jsonBookRentalSuccess = JsonUtils.getContentFromResource("/json/book-rental.json");
+        final var expectedResponse = BookMockFactory.getBookSaved();
+        when(bookRentalUseCasePort.rentBook(anyInt(), any(BookRentalDTO.class))).thenReturn(expectedResponse);
+        mockMvc.perform(post(url).contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonBookRentalSuccess))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @SneakyThrows
+    public void givenUnavailableBook_whenPostRentEndpoint_thenReturnBadRequest() {
+        final var bookId = 1;
+        final var url = UrlBuilder.builder(PATH)
+                .pathVariable(bookId)
+                .path("/rent")
+                .build();
+        final var bookRental = BookMockFactory.getBookRental();
+        final var jsonBookRentalSuccess = JsonUtils.getContentFromResource("/json/book-rental.json");
+        doThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST))
+                .when(bookRentalUseCasePort)
+                .rentBook(bookId, bookRental);
+
+        mockMvc.perform(post(url).contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonBookRentalSuccess))
+                .andExpect(status().isBadRequest());
     }
 }
