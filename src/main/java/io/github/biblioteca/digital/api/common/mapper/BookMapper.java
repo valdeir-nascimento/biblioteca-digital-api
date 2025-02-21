@@ -13,7 +13,6 @@ public interface BookMapper {
 
     @Mapping(target = "title", source = "title")
     @Mapping(target = "user", source = "userId", qualifiedByName = "mapUser")
-    @Mapping(target = "rentalDate", ignore = true)
     Book toEntity(BookDTO dto);
 
     @Mapping(target = "id", expression = "java(book.getId() != null ? book.getId().intValue() : null)")
@@ -23,7 +22,6 @@ public interface BookMapper {
 
     @Mapping(target = "title", source = "title")
     @Mapping(target = "user", source = "userId", qualifiedByName = "mapUser")
-    @Mapping(target = "rentalDate", ignore = true)
     void copyToProperties(BookDTO dto, @MappingTarget Book book);
 
     @Named("mapUser")
