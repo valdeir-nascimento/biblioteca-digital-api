@@ -1,6 +1,7 @@
 package io.github.biblioteca.digital.api.domain.usecase;
 
 import io.github.biblioteca.digital.api.common.exception.NotFoundException;
+import io.github.biblioteca.digital.api.domain.port.in.MessagingNotificationUseCasePort;
 import io.github.biblioteca.digital.api.domain.port.in.UserValidationUseCasePort;
 import io.github.biblioteca.digital.api.domain.port.out.BookRepositoryPort;
 import io.github.biblioteca.digital.api.common.mock.BookMockFactory;
@@ -23,6 +24,9 @@ class BookUseCaseTest {
     @Mock
     private UserValidationUseCasePort userValidationUseCasePort;
 
+    @Mock
+    private MessagingNotificationUseCasePort messagingNotificationUseCasePort;
+
     @InjectMocks
     private BookUseCase bookUseCase;
 
@@ -44,6 +48,7 @@ class BookUseCaseTest {
 
         verify(bookRepositoryPort, times(1)).create(book);
         verify(userValidationUseCasePort, never()).validateUserExists(any());
+        verify(messagingNotificationUseCasePort, times(1)).sendEvent(anyString());
     }
 
     @Test
@@ -56,6 +61,7 @@ class BookUseCaseTest {
         NotFoundException exception = assertThrows(NotFoundException.class, () -> bookUseCase.create(book));
         assertEquals(MSG_USER_NOT_FOUND, exception.getMessage());
         verify(bookRepositoryPort, never()).create(book);
+        verify(messagingNotificationUseCasePort, never()).sendEvent(anyString());
     }
 
     @Test
@@ -67,6 +73,7 @@ class BookUseCaseTest {
 
         verify(userValidationUseCasePort, times(1)).validateUserExists(bookDTO.userId());
         verify(bookRepositoryPort, times(1)).update(bookId, bookDTO);
+        verify(messagingNotificationUseCasePort, times(1)).sendEvent(anyString());
     }
 
     @Test
@@ -80,6 +87,7 @@ class BookUseCaseTest {
 
         assertEquals(expectedBook, result);
         verify(bookRepositoryPort, times(1)).findById(bookId);
+        verify(messagingNotificationUseCasePort, times(1)).sendEvent(anyString());
     }
 
     @Test
@@ -89,6 +97,7 @@ class BookUseCaseTest {
         bookUseCase.deleteById(bookId);
 
         verify(bookRepositoryPort, times(1)).deleteById(bookId);
+        verify(messagingNotificationUseCasePort, times(1)).sendEvent(anyString());
     }
 
     @Test
@@ -102,5 +111,6 @@ class BookUseCaseTest {
 
         assertEquals(expectedResponse, result);
         verify(bookRepositoryPort, times(1)).findAll(page, size);
+        verify(messagingNotificationUseCasePort, times(1)).sendEvent(anyString());
     }
 }
