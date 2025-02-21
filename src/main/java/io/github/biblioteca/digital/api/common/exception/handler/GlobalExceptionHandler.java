@@ -1,15 +1,14 @@
 package io.github.biblioteca.digital.api.common.exception.handler;
 
-import java.time.OffsetDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
-
+import com.fasterxml.jackson.databind.JsonMappingException.Reference;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import com.fasterxml.jackson.databind.exc.PropertyBindingException;
 import io.github.biblioteca.digital.api.common.exception.BookNotAvailableException;
 import io.github.biblioteca.digital.api.common.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.TypeMismatchException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpHeaders;
@@ -17,7 +16,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
@@ -29,12 +27,9 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-
-import com.fasterxml.jackson.databind.JsonMappingException.Reference;
-import com.fasterxml.jackson.databind.exc.InvalidFormatException;
-import com.fasterxml.jackson.databind.exc.PropertyBindingException;
-
-import lombok.extern.slf4j.Slf4j;
+import java.time.OffsetDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -75,10 +70,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                             .name(name)
                             .userMessage(message)
                             .build();
-                })
-                .toList();
+                }).toList();
 
-        JsonError.JsonErrorBuilder jsonError = createProblemBuilder(status, typeError, detail);
+        JsonError jsonError = createProblemBuilder(status, typeError, detail)
+                .userMessage(detail)
+                .fields(problemFields)
+                .build();
         return handleExceptionInternal(ex, jsonError, headers, status, request);
     }
 

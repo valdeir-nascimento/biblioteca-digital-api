@@ -47,11 +47,10 @@ public class BookRepositoryAdapter implements BookRepositoryPort {
 
     @Override
     public void deleteById(Integer bookId) {
-        try {
-            bookRepository.deleteById(bookId);
-        } catch (EmptyResultDataAccessException ex) {
+        if (!bookRepository.existsById(bookId)) {
             throw new NotFoundException(MessagesUtils.MSG_BOOK_NOT_FOUND);
         }
+        bookRepository.deleteById(bookId);
     }
 
     @Override
