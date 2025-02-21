@@ -1,5 +1,7 @@
 package io.github.biblioteca.digital.api.infrastructure.model;
 
+import io.github.biblioteca.digital.api.common.exception.BookNotAvailableException;
+import io.github.biblioteca.digital.api.common.util.MessagesUtils;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -37,4 +39,11 @@ public class Book {
     @Column(name = "data_aluguel")
     private LocalDateTime rentalDate;
 
+    public void rent() {
+        if (!available) {
+            throw new BookNotAvailableException(MessagesUtils.MSG_BOOK_NOT_AVAILABLE);
+        }
+        this.available = false;
+        this.rentalDate = LocalDateTime.now();
+    }
 }
