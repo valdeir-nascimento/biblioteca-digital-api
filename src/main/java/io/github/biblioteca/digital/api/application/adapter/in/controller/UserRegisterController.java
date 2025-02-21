@@ -1,5 +1,6 @@
 package io.github.biblioteca.digital.api.application.adapter.in.controller;
 
+import io.github.biblioteca.digital.api.application.adapter.in.openapi.UserRegisterControllerOpenApi;
 import io.github.biblioteca.digital.api.common.dto.UserDTO;
 import io.github.biblioteca.digital.api.domain.port.in.UserRegisterUseCasePort;
 import jakarta.validation.Valid;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/users")
-public class UserRegisterController {
+public class UserRegisterController implements UserRegisterControllerOpenApi {
 
     private final UserRegisterUseCasePort userRegisterUseCasePort;
 

@@ -1,5 +1,6 @@
 package io.github.biblioteca.digital.api.application.adapter.in.controller;
 
+import io.github.biblioteca.digital.api.application.adapter.in.openapi.BookControllerOpenApi;
 import io.github.biblioteca.digital.api.common.dto.BookDTO;
 import io.github.biblioteca.digital.api.common.dto.BookRentalDTO;
 import io.github.biblioteca.digital.api.common.dto.response.PageResponseDTO;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/books")
-public class BookController {
+public class BookController implements BookControllerOpenApi {
 
     private final BookUseCasePort bookUseCasePort;
     private final BookRentalUseCasePort bookRentalUseCase;
