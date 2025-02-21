@@ -1,13 +1,13 @@
-package io.github.biblioteca_digital_api;
+package io.github.biblioteca.digital.api;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class BibliotecaDigitalApiApplication {
+public class Application {
 
 	public static void main(String[] args) {
-		SpringApplication.run(BibliotecaDigitalApiApplication.class, args);
+		SpringApplication.run(Application.class, args);
 	}
 
 }
