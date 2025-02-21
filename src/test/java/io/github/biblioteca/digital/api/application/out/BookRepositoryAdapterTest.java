@@ -5,16 +5,16 @@ import io.github.biblioteca.digital.api.common.dto.BookDTO;
 import io.github.biblioteca.digital.api.common.dto.response.PageResponseDTO;
 import io.github.biblioteca.digital.api.common.exception.NotFoundException;
 import io.github.biblioteca.digital.api.common.mapper.BookMapper;
-import io.github.biblioteca.digital.api.infrastructure.model.Book;
-import io.github.biblioteca.digital.api.infrastructure.repository.BookRepository;
 import io.github.biblioteca.digital.api.common.mock.BookMockFactory;
 import io.github.biblioteca.digital.api.common.mock.UserMockFactory;
+import io.github.biblioteca.digital.api.common.util.MessagesUtils;
+import io.github.biblioteca.digital.api.infrastructure.model.Book;
+import io.github.biblioteca.digital.api.infrastructure.repository.BookRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -95,21 +95,22 @@ class BookRepositoryAdapterTest {
     @Test
     void givenExistingBook_whenDeleteById_thenDeleteBookSuccessfully() {
         final var bookId = 1;
-        doNothing().when(bookRepository).deleteById(bookId);
-        assertDoesNotThrow(() -> bookRepositoryAdapter.deleteById(bookId));
-        verify(bookRepository).deleteById(bookId);
+        when(bookRepository.existsById(bookId)).thenReturn(true);
+        bookRepositoryAdapter.deleteById(bookId);
+        verify(bookRepository, times(1)).deleteById(bookId);
     }
 
     @Test
     void givenNonExistingBook_whenDeleteById_thenThrowNotFoundException() {
-        final var bookId = 999;
-        doThrow(new EmptyResultDataAccessException(1)).when(bookRepository).deleteById(bookId);
+        final var bookId = 1;
+        when(bookRepository.existsById(bookId)).thenReturn(false);
 
         NotFoundException exception = assertThrows(NotFoundException.class, () -> {
             bookRepositoryAdapter.deleteById(bookId);
         });
-        assertEquals("Book not found", exception.getMessage());
-        verify(bookRepository).deleteById(bookId);
+
+        assertEquals(MessagesUtils.MSG_BOOK_NOT_FOUND, exception.getMessage());
+        verify(bookRepository, never()).deleteById(any());
     }
 
     @Test
