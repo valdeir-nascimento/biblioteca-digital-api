@@ -7,7 +7,7 @@ public interface BookUseCasePort {
 
     BookDTO create(BookDTO bookDTO);
 
-    void update(Integer bookId, BookDTO bookDTO);
+    BookDTO update(Integer bookId, BookDTO bookDTO);
 
     BookDTO findById(Integer bookId);
 

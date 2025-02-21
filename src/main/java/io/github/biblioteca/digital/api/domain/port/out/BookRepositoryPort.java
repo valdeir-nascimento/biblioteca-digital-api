@@ -7,7 +7,7 @@ public interface BookRepositoryPort {
 
     BookDTO create(BookDTO bookDTO);
 
-    void update(Integer bookId, BookDTO dto);
+    BookDTO update(Integer bookId, BookDTO dto);
 
     BookDTO findById(Integer bookId);
 

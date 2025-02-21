@@ -4,6 +4,7 @@ import io.github.biblioteca.digital.api.common.mapper.BookMapper;
 import io.github.biblioteca.digital.api.common.dto.BookDTO;
 import io.github.biblioteca.digital.api.common.dto.response.PageResponseDTO;
 import io.github.biblioteca.digital.api.common.exception.NotFoundException;
+import io.github.biblioteca.digital.api.common.util.MessagesUtils;
 import io.github.biblioteca.digital.api.domain.port.out.BookRepositoryPort;
 import io.github.biblioteca.digital.api.infrastructure.model.Book;
 import io.github.biblioteca.digital.api.infrastructure.repository.BookRepository;
@@ -31,10 +32,11 @@ public class BookRepositoryAdapter implements BookRepositoryPort {
     }
 
     @Override
-    public void update(Integer bookId, BookDTO bookDTO) {
+    public BookDTO update(Integer bookId, BookDTO bookDTO) {
         Book book = getBook(bookId);
         bookMapper.copyToProperties(bookDTO, book);
-        bookRepository.save(book);
+        book = bookRepository.save(book);
+        return bookMapper.toDTO(book);
     }
 
     @Override
@@ -48,7 +50,7 @@ public class BookRepositoryAdapter implements BookRepositoryPort {
         try {
             bookRepository.deleteById(bookId);
         } catch (EmptyResultDataAccessException ex) {
-            throw new NotFoundException("Book not found");
+            throw new NotFoundException(MessagesUtils.MSG_BOOK_NOT_FOUND);
         }
     }
 
@@ -70,6 +72,6 @@ public class BookRepositoryAdapter implements BookRepositoryPort {
 
     private Book getBook(Integer bookId) {
         return bookRepository.findById(bookId)
-                .orElseThrow(() -> new NotFoundException("Book not found"));
+                .orElseThrow(() -> new NotFoundException(MessagesUtils.MSG_BOOK_NOT_FOUND));
     }
 }

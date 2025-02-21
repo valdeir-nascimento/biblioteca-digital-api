@@ -1,7 +1,9 @@
 package io.github.biblioteca.digital.api.application.adapter.in.controller;
 
 import io.github.biblioteca.digital.api.common.dto.BookDTO;
+import io.github.biblioteca.digital.api.common.dto.BookRentalDTO;
 import io.github.biblioteca.digital.api.common.dto.response.PageResponseDTO;
+import io.github.biblioteca.digital.api.domain.port.in.BookRentalUseCasePort;
 import io.github.biblioteca.digital.api.domain.port.in.BookUseCasePort;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 public class BookController {
 
     private final BookUseCasePort bookUseCasePort;
+    private final BookRentalUseCasePort bookRentalUseCase;
 
     @PostMapping
     public ResponseEntity<BookDTO> create(@Valid @RequestBody BookDTO bookDTO) {
@@ -24,8 +27,8 @@ public class BookController {
 
     @PutMapping("/{bookId}")
     public ResponseEntity<BookDTO> update(@PathVariable Integer bookId, @Valid @RequestBody BookDTO bookDTO) {
-        bookUseCasePort.update(bookId, bookDTO);
-        return ResponseEntity.noContent().build();
+        final var response = bookUseCasePort.update(bookId, bookDTO);
+        return ResponseEntity.ok().body(response);
     }
 
     @GetMapping("/{bookId}")
@@ -45,6 +48,12 @@ public class BookController {
         @RequestParam(value = "page", defaultValue = "0") int page,
         @RequestParam(value = "size", defaultValue = "10") int size) {
         final var response = bookUseCasePort.findAll(page, size);
+        return ResponseEntity.ok().body(response);
+    }
+
+    @PostMapping("/{bookId}/rent")
+    public ResponseEntity<BookDTO> rentBook(@PathVariable Integer bookId, @Valid @RequestBody BookRentalDTO bookRentalDTO) {
+        final var response = bookRentalUseCase.rentBook(bookId, bookRentalDTO);
         return ResponseEntity.ok().body(response);
     }
 

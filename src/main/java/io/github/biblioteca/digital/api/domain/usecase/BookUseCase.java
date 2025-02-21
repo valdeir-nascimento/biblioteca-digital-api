@@ -6,6 +6,8 @@ import io.github.biblioteca.digital.api.domain.port.in.BookUseCasePort;
 import io.github.biblioteca.digital.api.domain.port.in.UserValidationUseCasePort;
 import io.github.biblioteca.digital.api.domain.port.out.BookRepositoryPort;
 
+import java.util.Objects;
+
 public class BookUseCase implements BookUseCasePort {
 
     private final BookRepositoryPort bookRepositoryPort;
@@ -26,9 +28,9 @@ public class BookUseCase implements BookUseCasePort {
     }
 
     @Override
-    public void update(Integer bookId, BookDTO bookDTO) {
+    public BookDTO update(Integer bookId, BookDTO bookDTO) {
         validationUseCasePort.validateUserExists(bookDTO.userId());
-        bookRepositoryPort.update(bookId, bookDTO);
+        return bookRepositoryPort.update(bookId, bookDTO);
     }
 
     @Override
